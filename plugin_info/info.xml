@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+    <id>gmailinfo</id>
+    <name>Gmail Infos</name>
+    <description>Plugin pour récupérer des informations sur son compte GMail. Actuellement limité au nombre d'email non lus.</description>
+    <icon>fa fa-envelope</icon>
+    <licence>AGPL</licence>
+    <author>Stéphane Cazeaux</author>
+    <installation>Aucune</installation>
+    <require>1.10</require>
+    <version>1.1</version>
+    <category>communication</category>
+</info>
+
