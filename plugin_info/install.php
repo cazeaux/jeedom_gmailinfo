@@ -27,7 +27,7 @@ function gmailinfo_install() {
         $cron->setFunction('pull');
         $cron->setEnable(1);
         $cron->setDeamon(0);
-        $cron->setSchedule('2 */1 * * *');
+        $cron->setSchedule('2-59/5 * * * *');
         $cron->save();
     }
 }
@@ -40,10 +40,24 @@ function gmailinfo_update() {
         $cron->setFunction('pull');
         $cron->setEnable(1);
         $cron->setDeamon(0);
-        $cron->setSchedule('2 */1 * * *');
+        $cron->setSchedule('2-59/5 * * * *');
+        $cron->save();
+    }
+    else {
+        $cron->setSchedule('2-59/5 * * * *');
         $cron->save();
     }
     $cron->stop();
+
+    foreach (eqLogic::byType('gmailinfo') as $gmail) {
+        foreach ($gmail->getCmd() as $cmd) {
+            if($cmd->getConfiguration('data')=='unreadcount'){
+                $cmd->setLogicalId('unreadcount');
+                $cmd->setEventOnly(true);
+                $cmd->save();
+            }
+        }
+    }
 }
 
 function gmailinfo_remove() {
@@ -52,4 +66,5 @@ function gmailinfo_remove() {
         $cron->remove();
     }
 }
+
 ?>

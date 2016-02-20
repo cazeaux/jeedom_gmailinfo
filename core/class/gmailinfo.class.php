@@ -31,11 +31,20 @@ class gmailinfo extends eqLogic {
     /*     * ***********************Methode static*************************** */
     
 
-    public static function pull($_options) {
-        $gmailinfo = gmailinfo::byId($_options['gmailinfo_id']);
-		if (is_object($gmailinfo)) {
-			$gmailinfo->getInformations();
-		}         
+    public static function pull($_id=null) {
+        if ($_id != null) {      
+            $gmailinfo = gmailinfo::byId($_id);
+            if (is_object($gmailinfo)) {
+                $gmailinfo->getInformations();
+            }         
+        }
+        else {
+            foreach (eqLogic::byType('gmailinfo') as $gmailinfo) {
+                if (is_object($gmailinfo)) {
+                    $gmailinfo->getInformations();
+                }
+            }    
+        }
     }
 
 
@@ -56,7 +65,7 @@ class gmailinfo extends eqLogic {
         $gmail = new gmailinfoCmd();
         $gmail->setName(__('Mails non lus', __FILE__));
         $gmail->setEqLogic_id($this->id);
-        $gmail->setConfiguration('data', 'unreadcount');
+        $gmail->setLogicalId('unreadcount');
         $gmail->setUnite('');
         $gmail->setType('info');
         $gmail->setSubType('numeric');
@@ -82,24 +91,23 @@ class gmailinfo extends eqLogic {
 		curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		curl_setopt($curl, CURLOPT_ENCODING, "");
 		$curlData = curl_exec($curl);
-		curl_close($curl);
+		$res = curl_close($curl);
 		//returning retrieved feed
+        log::add('gmailinfo', 'debug', 'send request, result: '.$res);
 
 		$xmlobjc = new SimpleXMLElement($curlData);
 		$unreadcount = $xmlobjc->fullcount[0];
+        log::add('gmailinfo', 'debug', 'send request, unreadcount: '.$unreadcount);
         
         return intval($unreadcount);
     }
 
 
     public function getInformations() {
-    	log::add('gmailinfo', 'info', 'Récupération des données', 'config');
-        
-		foreach ($this->getCmd() as $cmd) {
-			if($cmd->getConfiguration('data')=="unreadcount"){
-				$cmd->event($this->getUnreadCount());
-			}
-		}
+    	log::add('gmailinfo', 'debug', 'Récupération des données', 'config');
+        $cmd = $this->getCmd(null, 'unreadcount');
+
+		$cmd->event($this->getUnreadCount());
         return ;
     }
 	/*
@@ -125,7 +133,7 @@ class gmailinfoCmd extends cmd {
    public function execute($_options = null) {
         $eqLogic_gmail = $this->getEqLogic();
 
-        if ($this->getConfiguration('data') == 'unreadcount') {
+        if ($this->getLogicalId() == 'unreadcount') {
 			$unreadcount = $eqLogic_gmail->getUnreadCount();
 			return $unreadcount;
        }
