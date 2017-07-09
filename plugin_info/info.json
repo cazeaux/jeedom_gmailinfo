@@ -7,6 +7,6 @@
 	"require" : "3.0",
 	"category" : "communication",
 	"hasDependency" : false,
-	"hasOwnDeamon" : true,
+	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0
 }
