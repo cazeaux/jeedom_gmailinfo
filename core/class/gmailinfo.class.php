@@ -70,6 +70,7 @@ class gmailinfo extends eqLogic {
         $gmail->setType('info');
         $gmail->setSubType('numeric');
 		$gmail->setIsHistorized(0);
+        $gmail->setEventOnly(true);
         $gmail->save();
     }
 
